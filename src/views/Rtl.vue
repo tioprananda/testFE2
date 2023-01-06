@@ -843,8 +843,13 @@ export default {
     TimelineList,
     TimelineItem,
   },
+  
   mounted() {
     setTooltip();
+    let user = localStorage.getItem('user-info');
+    if(!user){
+      this.$router.push('/sign-in')
+    }
   },
   beforeMount() {
     this.$store.state.isRTL = true;

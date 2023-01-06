@@ -136,29 +136,32 @@
             </div>
           </div>
           <div class="card-body">
-            <form role="form">
+            <form role="form" @submit.prevent="submit">
               <div class="mb-3">
-                <soft-input
+                <input
                   id="name"
                   type="text"
                   placeholder="Name"
                   aria-label="Name"
+                  v-model="form.name"
                 />
               </div>
               <div class="mb-3">
-                <soft-input
+                <input
                   id="email"
                   type="email"
                   placeholder="Email"
                   aria-label="Email"
+                  v-model="form.email"
                 />
               </div>
               <div class="mb-3">
-                <soft-input
+                <input
                   id="password"
                   type="password"
                   placeholder="Password"
                   aria-label="Password"
+                  v-model="form.password"
                 />
               </div>
               <soft-checkbox
@@ -203,10 +206,10 @@
 <script>
 import Navbar from "@/examples/PageLayout/Navbar.vue";
 import AppFooter from "@/examples/PageLayout/Footer.vue";
-import SoftInput from "@/components/SoftInput.vue";
+// import SoftInput from "@/components/SoftInput.vue";
 import SoftCheckbox from "@/components/SoftCheckbox.vue";
 import SoftButton from "@/components/SoftButton.vue";
-
+import axios from 'axios';
 import { mapMutations } from "vuex";
 
 export default {
@@ -214,9 +217,18 @@ export default {
   components: {
     Navbar,
     AppFooter,
-    SoftInput,
+    // SoftInput,
     SoftCheckbox,
     SoftButton,
+  },
+  data(){
+    return {
+      form : {
+        name : ``,
+        email : ``,
+        password : ``,
+      },
+    }
   },
   created() {
     this.toggleEveryDisplay();
@@ -228,6 +240,20 @@ export default {
   },
   methods: {
     ...mapMutations(["toggleEveryDisplay", "toggleHideConfig"]),
+    submit : async function () {
+        let result = await axios.post(`http://localhost:3000/users`,this.form);
+        console.log(result);
+        if(result.status === 201){
+          localStorage.setItem('user-info', JSON.stringify(result.data));
+          this.$router.push('/')
+        }
+    }
   },
+  mounted(){
+    let user = localStorage.getItem('user-info');
+    if(user){
+      this.$router.push('/')
+    }
+  }
 };
 </script>

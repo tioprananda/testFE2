@@ -23,5 +23,11 @@ export default {
     AuthorsTable,
     ProjectsTable,
   },
+  mounted(){
+    let user = localStorage.getItem('user-info');
+    if(!user){
+      this.$router.push('/sign-in')
+    }
+  },
 };
 </script>

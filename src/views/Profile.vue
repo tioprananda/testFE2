@@ -595,11 +595,20 @@ export default {
     };
   },
 
-  mounted() {
+  mounted(){
+    // jika user masih login, halaman akan mounted otomatis ke home page
     this.$store.state.isAbsolute = true;
     setNavPills();
     setTooltip(this.$store.state.bootstrap);
+    
+    let user = localStorage.getItem('user-info');
+    if(user){
+      this.$router.push('/')
+    } else {
+      this.$router.push('/sign-in')
+    }
   },
+
   beforeUnmount() {
     this.$store.state.isAbsolute = false;
   },

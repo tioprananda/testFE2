@@ -183,9 +183,6 @@ export default {
   computed: {
     ...mapState(["isTransparent", "isNavFixed", "navbarFixed", "mcolor"]),
   },
-  mounted() {
-    setTooltip(this.$store.state.bootstrap);
-  },
   beforeMount() {
     this.$store.state.showNavbar = false;
     this.$store.state.showSidenav = false;
@@ -210,5 +207,12 @@ export default {
   methods: {
     ...mapMutations(["navbarMinimize", "toggleConfigurator"]),
   },
+  mounted(){
+    setTooltip(this.$store.state.bootstrap);
+    let user = localStorage.getItem('user-info');
+    if(!user){
+      this.$router.push('/sign-in')
+    }
+  }
 };
 </script>

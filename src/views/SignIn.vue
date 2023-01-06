@@ -24,20 +24,22 @@
                   <p class="mb-0">Enter your email and password to sign in</p>
                 </div>
                 <div class="card-body">
-                  <form role="form" class="text-start">
+                  <form role="form" class="text-start" @submit.prevent="submit">
                     <label>Email</label>
-                    <soft-input
+                    <input
                       id="email"
                       type="email"
                       placeholder="Email"
                       name="email"
+                      v-model="form.email"
                     />
                     <label>Password</label>
-                    <soft-input
+                    <input
                       id="password"
                       type="password"
                       placeholder="Password"
                       name="password"
+                      v-model="form.password"
                     />
                     <soft-switch id="rememberMe" name="rememberMe" checked>
                       Remember me
@@ -91,20 +93,29 @@
 <script>
 import Navbar from "@/examples/PageLayout/Navbar.vue";
 import AppFooter from "@/examples/PageLayout/Footer.vue";
-import SoftInput from "@/components/SoftInput.vue";
+// import SoftInput from "@/components/SoftInput.vue";
 import SoftSwitch from "@/components/SoftSwitch.vue";
 import SoftButton from "@/components/SoftButton.vue";
 const body = document.getElementsByTagName("body")[0];
 import { mapMutations } from "vuex";
+import axios from 'axios';
 
 export default {
   name: "SignIn",
   components: {
     Navbar,
     AppFooter,
-    SoftInput,
+    // SoftInput,
     SoftSwitch,
     SoftButton,
+  },
+  data(){
+    return{
+      form : {
+        email : ``,
+        password : ``,
+      }
+    }
   },
   created() {
     this.toggleEveryDisplay();
@@ -118,6 +129,29 @@ export default {
   },
   methods: {
     ...mapMutations(["toggleEveryDisplay", "toggleHideConfig"]),
+    async submit(){
+      // get api users
+      let result = await axios.get(`http://localhost:3000/users?email=${this.form.email}&password=${this.form.password}`);
+      console.log(result);
+
+      // cocokkan data dgn hasil inputan, jika true redirect ke halaman /
+        // jika result.status === 200 dan jumlah result > 0 maka 
+          // masukan kedalam localstorage dgn key user-info, input spesifikasi data result index ke 0
+      if(result.status === 200 && result.data.length > 0) {
+        localStorage.setItem('user-info', JSON.stringify(result.data[0]))
+        this.$router.push("/")
+      }
+    },
   },
+  mounted(){
+    // jika user masih login, halaman akan mounted otomatis ke home page
+    let user = localStorage.getItem('user-info');
+    if(user){
+      this.$router.push('/')
+    } else {
+      this.$router.push('/sign-in')
+    }
+
+  }
 };
 </script>
