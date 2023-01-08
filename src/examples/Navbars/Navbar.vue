@@ -29,10 +29,10 @@
             />
           </div>
         </div>
-        <ul class="navbar-nav justify-content-end">
+        <ul class="navbar-nav justify-content-end" v-for="item in userData" :key="item.id">
           <li class="nav-item d-flex align-items-center">
             <router-link
-              :to="{ name: 'Sign In' }"
+              to="/profile"
               class="px-0 nav-link font-weight-bold"
               :class="textWhite ? textWhite : 'text-body'"
             >
@@ -43,7 +43,8 @@
               <span v-if="this.$store.state.isRTL" class="d-sm-inline d-none"
                 >يسجل دخول</span
               >
-              <span v-else class="d-sm-inline d-none">Sign In </span>
+              <span v-if="item.id" class="d-sm-inline d-none">{{ item.name }} </span>
+              <span v-else class="d-sm-inline d-none">Sign In</span>
             </router-link>
           </li>
           <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
@@ -69,6 +70,7 @@
               <i class="cursor-pointer fa fa-cog fixed-plugin-button-nav"></i>
             </a>
           </li>
+  
           <li
             class="nav-item dropdown d-flex align-items-center"
             :class="this.$store.state.isRTL ? 'ps-2' : 'pe-2'"
@@ -87,6 +89,7 @@
             >
               <i class="cursor-pointer fa fa-bell"></i>
             </a>
+            
             <ul
               class="px-2 py-3 dropdown-menu dropdown-menu-end me-sm-n4"
               :class="showMenu ? 'show' : ''"
@@ -195,6 +198,23 @@
               </li>
             </ul>
           </li>
+
+          <li class="nav-item d-flex align-items-center" @click.prevent="logout">
+            <router-link
+              to=""
+              class="px-0 nav-link font-weight-bold"
+              :class="textWhite ? textWhite : 'text-body'"
+            >
+              <i
+                
+                :class="this.$store.state.isRTL ? 'ms-sm-2' : 'me-sm-1'"
+              ></i>
+              <span v-if="this.$store.state.isRTL" class="d-sm-inline d-none"
+                >يسجل دخول</span
+              >
+              <span v-else class="d-sm-inline d-none">Logout </span>
+            </router-link>
+          </li>
         </ul>
       </div>
     </div>
@@ -203,12 +223,15 @@
 <script>
 import Breadcrumbs from "../Breadcrumbs.vue";
 import { mapMutations, mapActions } from "vuex";
+import axios from 'axios';
 
 export default {
   name: "navbar",
   data() {
     return {
       showMenu: false,
+      user : ``,
+      userData : [],
     };
   },
   props: ["minNav", "textWhite"],
@@ -223,6 +246,19 @@ export default {
       this.toggleSidebarColor("bg-white");
       this.navbarMinimize();
     },
+
+    async logout(){
+      await localStorage.clear();
+      this.$router.push('/sign-in');
+    },
+
+    getUser(data){
+      data.forEach((item) => {
+        if(item.id === this.user.id) {
+          this.userData.push(item);
+        }
+      })
+    },
   },
   components: {
     Breadcrumbs,
@@ -231,6 +267,21 @@ export default {
     currentRouteName() {
       return this.$route.name;
     },
+  },
+  mounted(){
+
+    // get api data 
+    axios.get(`http://localhost:3000/users`).then((response) => {
+      this.getUser(response.data)
+    })
+
+    // get local data
+    let user = localStorage.getItem(`user-info`);
+    if(user){
+      this.user = JSON.parse(user);
+    } else {
+      this.$router.push('/sign-in');
+    }
   },
   updated() {
     const navbar = document.getElementById("navbarBlur");
@@ -246,5 +297,6 @@ export default {
       }
     });
   },
+
 };
 </script>

@@ -396,46 +396,48 @@
   ],
   "users": [
     {
-      "name": "admin",
-      "email": "admin@gmail.com",
-      "password": "123",
+      "name": "test",
+      "address": null,
+      "telephone": null,
+      "image": null,
+      "email": "xxx@xxx",
+      "password": "xxx",
       "id": 1
     },
     {
-      "name": "asd",
-      "email": "asd@asd.asd",
-      "password": "asd",
+      "name": "tasdaadqd",
+      "address": null,
+      "telephone": null,
+      "image": null,
+      "email": "asd@asd.com",
+      "password": "123",
       "id": 2
     },
     {
-      "name": "tio",
-      "email": "tio@tio.com",
-      "password": "123",
+      "name": "marliana",
+      "address": null,
+      "telephone": null,
+      "image": null,
+      "email": "asd13@asd.123",
+      "password": "asd",
       "id": 3
     },
     {
-      "name": "asd",
-      "email": "asd@asd",
+      "name": "tio",
+      "address": "perawang",
+      "telephone": "12345",
+      "email": "ucy@ucy",
       "password": "123",
       "id": 4
     },
     {
-      "name": "123",
-      "email": "123@123",
-      "password": "123",
+      "name": "javascript",
+      "address": null,
+      "telephone": null,
+      "image": null,
+      "email": "javascript@java",
+      "password": "javascript",
       "id": 5
-    },
-    {
-      "name": "xxx",
-      "email": "xxx@xxx",
-      "password": "xxx",
-      "id": 6
-    },
-    {
-      "name": "tio",
-      "email": "tio@tio",
-      "password": "tio",
-      "id": 7
     }
   ]
 }

@@ -212,6 +212,7 @@ import SoftButton from "@/components/SoftButton.vue";
 import axios from 'axios';
 import { mapMutations } from "vuex";
 
+
 export default {
   name: "SignupBasic",
   components: {
@@ -225,6 +226,9 @@ export default {
     return {
       form : {
         name : ``,
+        address:null,
+        telephone : null,
+        image:null,
         email : ``,
         password : ``,
       },
@@ -241,12 +245,33 @@ export default {
   methods: {
     ...mapMutations(["toggleEveryDisplay", "toggleHideConfig"]),
     submit : async function () {
-        let result = await axios.post(`http://localhost:3000/users`,this.form);
-        console.log(result);
+      
+      if(this.form.email && this.form.password){
+
+        let result = await axios.post(`http://localhost:3000/users`,this.form)
+        .then(() => {
+          this.$toast.success(`Register Success`,{
+            duration : 3000,
+            message : `Register Success`,
+            position : `top-right`,
+            dismissible : true,
+      })
+      this.$router.push('/sign-in')
+    });
         if(result.status === 201){
           localStorage.setItem('user-info', JSON.stringify(result.data));
           this.$router.push('/')
         }
+      } else {
+        this.$toast.error(`Register Failed`,{
+            duration : 3000,
+            message : `Register Failed`,
+            position : `top-right`,
+            dismissible : true,
+      })
+      };
+    
+      
     }
   },
   mounted(){
