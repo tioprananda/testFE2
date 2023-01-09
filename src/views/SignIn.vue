@@ -1,4 +1,5 @@
 <template>
+
   <div class="container top-0 position-sticky z-index-sticky">
     <div class="row">
       <div class="col-12">
@@ -25,6 +26,9 @@
                 </div>
                 <div class="card-body">
                   <form role="form" class="text-start" @submit.prevent="submit">
+
+                    <beat-loader :loading="loading" :color="color" :size="size"></beat-loader>
+
                     <label>Email</label>
                     <soft-input
                       id="email"
@@ -98,19 +102,24 @@ import AppFooter from "@/examples/PageLayout/Footer.vue";
 import SoftInput from "@/components/SoftInput.vue";
 import SoftSwitch from "@/components/SoftSwitch.vue";
 import SoftButton from "@/components/SoftButton.vue";
+// import PageLoader from "@/components/PageLayout.vue";
 const body = document.getElementsByTagName("body")[0];
 import { mapMutations } from "vuex";
 import axios from "axios";
 import swal from "sweetalert";
 
+// import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
+
 export default {
   name: "SignIn",
   components: {
+    // PageLoader,
     Navbar,
     AppFooter,
     SoftInput,
     SoftSwitch,
     SoftButton,
+    // PulseLoader
   },
   data() {
     return {
