@@ -401,8 +401,35 @@
       "telephone": "088742505356",
       "email": "prananda.tio@gmail.com",
       "password": "123",
-      "image": "blob:http://localhost:8080/8435f797-62c8-49fa-8850-f899edc58118",
+      "image": "blob:http://localhost:8080/b81d4a70-8c87-40aa-a65d-53affbb070f5",
       "id": 1
+    },
+    {
+      "name": "test",
+      "address": null,
+      "telephone": null,
+      "email": "test@test",
+      "password": "test",
+      "image": "blob:http://localhost:8080/f7ef73bd-ad59-49c6-a631-97c3f1927f66",
+      "id": 2
+    },
+    {
+      "name": "test2",
+      "address": "123",
+      "telephone": "123",
+      "email": "test2@test2",
+      "password": "123",
+      "image": "blob:http://localhost:8080/063079ef-f01c-45d7-8340-e9e9314e2ca5",
+      "id": 3
+    },
+    {
+      "name": "test1",
+      "address": "123",
+      "telephone": "123",
+      "email": "test1@test1",
+      "password": "test1",
+      "image": "blob:http://localhost:8080/54bbffcc-5987-42da-af2f-db74283af1b6",
+      "id": 4
     }
   ]
 }

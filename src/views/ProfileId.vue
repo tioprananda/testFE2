@@ -219,7 +219,7 @@ export default {
       // item.image = dataImg;
       this.previewImg = URL.createObjectURL(event.target.files[0])
       item.image = URL.createObjectURL(event.target.files[0]);
-      this.dataUser.image.push(item.image)
+      this.dataUser.image = item.image;
     },
     
     idProfile(data) {
