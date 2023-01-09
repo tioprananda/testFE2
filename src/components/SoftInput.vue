@@ -10,10 +10,10 @@
         class="form-control"
         :class="getClasses(size, success, error)"
         :name="name"
-        :value="value"
+        :value="modelValue"
         :placeholder="placeholder"
         :isRequired="isRequired"
-        @input="updateValue"
+        @input='$emit("update:modelValue", $event.target.value)'
       />
       <span v-if="iconDir === 'right'" class="input-group-text">
         <i :class="getIcon(icon)"></i>
@@ -26,6 +26,7 @@
 export default {
   name: "SoftInput",
   props: {
+    
     size: {
       type: String,
       default: "default",
@@ -70,6 +71,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    modelValue: String
   },
   methods: {
     getClasses: (size, success, error) => {
@@ -89,9 +91,25 @@ export default {
     },
     getIcon: (icon) => (icon ? icon : null),
     hasIcon: (icon) => (icon ? "input-group" : null),
-    updateValue(event){
-      this.$emit('input', event.target.value);
-    }
   },
 };
 </script>
+
+  <!-- <div>
+    <input 
+      type="text"
+      placeholder="input"
+      :value="modelValue"
+      @input='$emit("update:modelValue", $event.target.value)'
+    >
+  </div>
+</template>
+
+<script>
+export default {
+  props : {
+    modelValue : String
+  },
+
+}
+</script> -->

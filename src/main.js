@@ -23,6 +23,7 @@ import SoftUIDashboard from "./soft-ui-dashboard";
 // import "bootstrap/dist/css/bootstrap.min.css"
 import ToastPlugin from 'vue-toast-notification';
 
+
 const appInstance = createApp(App);
 appInstance.use(store);
 appInstance.use(router);

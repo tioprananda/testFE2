@@ -29,10 +29,12 @@
             />
           </div>
         </div>
-        <ul class="navbar-nav justify-content-end" v-for="item in userData" :key="item.id">
+        <ul
+          class="navbar-nav justify-content-end"
+        >
           <li class="nav-item d-flex align-items-center">
             <router-link
-              to="/profile"
+              :to="{ name: 'Profile' }"
               class="px-0 nav-link font-weight-bold"
               :class="textWhite ? textWhite : 'text-body'"
             >
@@ -43,8 +45,10 @@
               <span v-if="this.$store.state.isRTL" class="d-sm-inline d-none"
                 >يسجل دخول</span
               >
-              <span v-if="item.id" class="d-sm-inline d-none">{{ item.name }} </span>
-              <span v-else class="d-sm-inline d-none">Sign In</span>
+              <span v-if="this.dataUser.id" class="d-sm-inline d-none"
+                >{{ this.dataUser.name }}
+              </span>
+              <span v-else class="d-sm-inline d-none">Sign In </span>
             </router-link>
           </li>
           <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
@@ -70,7 +74,6 @@
               <i class="cursor-pointer fa fa-cog fixed-plugin-button-nav"></i>
             </a>
           </li>
-  
           <li
             class="nav-item dropdown d-flex align-items-center"
             :class="this.$store.state.isRTL ? 'ps-2' : 'pe-2'"
@@ -89,7 +92,6 @@
             >
               <i class="cursor-pointer fa fa-bell"></i>
             </a>
-            
             <ul
               class="px-2 py-3 dropdown-menu dropdown-menu-end me-sm-n4"
               :class="showMenu ? 'show' : ''"
@@ -198,15 +200,15 @@
               </li>
             </ul>
           </li>
-
           <li class="nav-item d-flex align-items-center" @click.prevent="logout">
             <router-link
               to=""
-              class="px-0 nav-link font-weight-bold"
+              class="px-2 nav-link font-weight-bold"
               :class="textWhite ? textWhite : 'text-body'"
             >
               <i
-                
+                class="fa fa-sign-out"
+                aria-hidden="true"
                 :class="this.$store.state.isRTL ? 'ms-sm-2' : 'me-sm-1'"
               ></i>
               <span v-if="this.$store.state.isRTL" class="d-sm-inline d-none"
@@ -223,15 +225,15 @@
 <script>
 import Breadcrumbs from "../Breadcrumbs.vue";
 import { mapMutations, mapActions } from "vuex";
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   name: "navbar",
   data() {
     return {
       showMenu: false,
-      user : ``,
-      userData : [],
+      user: ``,
+      dataUser: {},
     };
   },
   props: ["minNav", "textWhite"],
@@ -247,18 +249,25 @@ export default {
       this.navbarMinimize();
     },
 
-    async logout(){
-      await localStorage.clear();
-      this.$router.push('/sign-in');
+       // tampilkan 1 data api yg cocok dgn local storage saat ini
+       getUser(data) {
+      const dataFilter = data.find((e) => {
+        if(e.id == this.userLocal.id){
+         return e;
+        }
+      });
+    
+      this.dataUser = dataFilter;
+      console.log(this.dataUser.name)
     },
 
-    getUser(data){
-      data.forEach((item) => {
-        if(item.id === this.user.id) {
-          this.userData.push(item);
-        }
-      })
+    // tombol logout
+    async logout() {
+      await localStorage.clear();
+      this.$router.push("/sign-in");
     },
+
+
   },
   components: {
     Breadcrumbs,
@@ -268,21 +277,22 @@ export default {
       return this.$route.name;
     },
   },
-  mounted(){
 
-    // get api data 
+  mounted() {
+    // get api data
     axios.get(`http://localhost:3000/users`).then((response) => {
-      this.getUser(response.data)
-    })
+      this.getUser(response.data);
+    });
 
-    // get local data
-    let user = localStorage.getItem(`user-info`);
-    if(user){
-      this.user = JSON.parse(user);
+    //  get data user dari local storage
+    let user = localStorage.getItem("user-info");
+    if (user) {
+      this.userLocal = JSON.parse(user);
     } else {
-      this.$router.push('/sign-in');
+      this.$router.push("/sign-in");
     }
   },
+
   updated() {
     const navbar = document.getElementById("navbarBlur");
     window.addEventListener("scroll", () => {
@@ -296,7 +306,11 @@ export default {
         navbar.classList.remove("shadow-blur");
       }
     });
-  },
 
+     // get api data
+     axios.get(`http://localhost:3000/users`).then((response) => {
+      this.getUser(response.data);
+    });
+  },
 };
 </script>

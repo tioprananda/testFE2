@@ -138,7 +138,7 @@
           <div class="card-body">
             <form role="form" @submit.prevent="submit">
               <div class="mb-3">
-                <input
+                <soft-input
                   id="name"
                   type="text"
                   placeholder="Name"
@@ -147,7 +147,7 @@
                 />
               </div>
               <div class="mb-3">
-                <input
+                <soft-input
                   id="email"
                   type="email"
                   placeholder="Email"
@@ -156,12 +156,21 @@
                 />
               </div>
               <div class="mb-3">
-                <input
+                <soft-input
                   id="password"
                   type="password"
                   placeholder="Password"
                   aria-label="Password"
                   v-model="form.password"
+                />
+              </div>
+              <div class="mb-3">
+                <soft-input
+                  id="passwordConfirm"
+                  type="password"
+                  placeholder="password Confirm"
+                  aria-label="passwordConfirm"
+                  v-model="form.passwordConfirm"
                 />
               </div>
               <soft-checkbox
@@ -206,33 +215,34 @@
 <script>
 import Navbar from "@/examples/PageLayout/Navbar.vue";
 import AppFooter from "@/examples/PageLayout/Footer.vue";
-// import SoftInput from "@/components/SoftInput.vue";
+import SoftInput from "@/components/SoftInput.vue";
 import SoftCheckbox from "@/components/SoftCheckbox.vue";
 import SoftButton from "@/components/SoftButton.vue";
-import axios from 'axios';
+import axios from "axios";
 import { mapMutations } from "vuex";
-
+import swal from "sweetalert";
 
 export default {
   name: "SignupBasic",
   components: {
     Navbar,
     AppFooter,
-    // SoftInput,
+    SoftInput,
     SoftCheckbox,
     SoftButton,
   },
-  data(){
+  data() {
     return {
-      form : {
-        name : ``,
-        address:null,
-        telephone : null,
-        image:null,
-        email : ``,
-        password : ``,
+      form: {
+        name: ``,
+        address: null,
+        telephone: null,
+        image: null,
+        email: ``,
+        password: ``,
+        passwordConfirm: ``,
       },
-    }
+    };
   },
   created() {
     this.toggleEveryDisplay();
@@ -244,41 +254,51 @@ export default {
   },
   methods: {
     ...mapMutations(["toggleEveryDisplay", "toggleHideConfig"]),
-    submit : async function () {
-      
-      if(this.form.email && this.form.password){
+    submit: async function () {
+      // jika password dan confirm password tidak sama
+      if (this.form.password !== this.form.passwordConfirm) {
+        await swal({
+          title: "Registration Failed",
+          text: "Your Password Not Match!",
+          icon: "warning",
+          button: "Ok",
+        });
 
-        let result = await axios.post(`http://localhost:3000/users`,this.form)
-        .then(() => {
-          this.$toast.success(`Register Success`,{
-            duration : 3000,
-            message : `Register Success`,
-            position : `top-right`,
-            dismissible : true,
-      })
-      this.$router.push('/sign-in')
-    });
-        if(result.status === 201){
-          localStorage.setItem('user-info', JSON.stringify(result.data));
-          this.$router.push('/')
+        // jika email dan password tidak ada
+      } else if (this.form.email && this.form.password) {
+        let result = await axios
+          .post(`http://localhost:3000/users`, this.form)
+          
+            await swal({
+              title: "Registration Completed",
+              text: "Your Account Has Been Created!",
+              icon: "success",
+              button: "Ok",
+            });
+
+            this.$router.push("/");
+          ;
+        if (result.status === 201) {
+          localStorage.setItem("user-info", JSON.stringify(result.data));
+          this.$router.push("/");
         }
       } else {
-        this.$toast.error(`Register Failed`,{
-            duration : 3000,
-            message : `Register Failed`,
-            position : `top-right`,
-            dismissible : true,
-      })
-      };
-    
-      
+        
+        swal({
+              title: "Registration Failed!",
+              text: "Please Insert Email and Password!",
+              icon: "warning",
+              button: "Ok",
+            });
+
+      }
+    },
+  },
+  mounted() {
+    let user = localStorage.getItem("user-info");
+    if (user) {
+      this.$router.push("/");
     }
   },
-  mounted(){
-    let user = localStorage.getItem('user-info');
-    if(user){
-      this.$router.push('/')
-    }
-  }
 };
 </script>

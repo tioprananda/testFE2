@@ -13,7 +13,7 @@
     <div class="mx-4 overflow-hidden card card-body blur shadow-blur mt-n6">
       <div class="row gx-4">
         <div class="col-auto">
-          <h4>Edit Profile</h4>
+          <h5>Manage Account</h5>
         </div>
       </div>
     </div>
@@ -21,8 +21,8 @@
 
   <div class="py-4 container-fluid" v-for="item in dataUser" :key="item.id">
     <div class="mt-3 row">
-      <div class="col-12 col-md-6 col-xl-6 my-2">
-        <!-- gambar -->
+      <!-- <div class="col-12 col-md-6 col-xl-6 my-2">
+       
         <div class="col-auto">
           <div class="position-relative" v-if="item.image">
             <img
@@ -39,75 +39,99 @@
             />
           </div>
         </div>
-        <!-- end gambar -->
-      </div>
+     
+      </div> -->
 
-      <div class="col-12 col-md-6 col-xl-6 my-2">
-        <div class="card-body">
-          <form role="form">
-            <div class="mb-3">
-              <label for="name">Name :</label>
-              <input
-                id="name"
-                type="text"
-                placeholder="Name"
-                aria-label="Name"
-                v-model="item.name"
-              />
-            </div>
-            <div class="mb-3">
-              <label for="address">Address : </label>
-              <input
-                id="address"
-                type="text"
-                placeholder="Address"
-                aria-label="Adress"
-                v-model="item.address"
-              />
-            </div>
-            <div class="mb-3">
-              <label for="telephone">telephone</label>
-              <input
-                id="telephone"
-                type="text"
-                placeholder="Telephone"
-                aria-label="Telephone"
-                v-model="item.telephone"
-              />
-            </div>
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="mx-auto col-xl-4 col-lg-5 col-md-7">
+            <div class="card z-index-0">
+              <div class="pt-4 text-center card-header">
+                <h5>Edit Account</h5>
+              </div>
 
-            <div class="mb-3">
-              <label for="email">email</label>
-              <input
-                id="email"
-                type="email"
-                placeholder="Email"
-                aria-label="Email"
-                v-model="item.email"
-              />
-            </div>
-            <div class="mb-3">
-              <label for="password">password</label>
-              <input
-                id="password"
-                type="password"
-                placeholder="Password"
-                aria-label="Password"
-                v-model="item.password"
-              />
-            </div>
+              <div class="card-body">
+                <form role="form" @submit.prevent="submit">
+                  <div class="mb-3">
+                    <label for="name">Name :</label>
+                    <soft-input
+                      id="name"
+                      type="text"
+                      placeholder="Name"
+                      aria-label="Name"
+                      v-model="item.name"
+                    />
+                  </div>
 
-            <button type="submit" class="btn btn-success m-2" @click="update(item.id, item)">
-              Update Data
-            </button>
-            <button
-              type="submit"
-              class="btn btn-warning m-2"
-              @click.prevent="reset"
-            >
-              Reset
-            </button>
-          </form>
+                  <div class="mb-3">
+                    <label for="address">Address :</label>
+                    <soft-input
+                      id="address"
+                      type="text"
+                      placeholder="Address"
+                      aria-label="Address"
+                      v-model="item.address"
+                    />
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="mobile">Mobile :</label>
+                    <soft-input
+                      id="mobile"
+                      type="number"
+                      placeholder="Phone Number"
+                      aria-label="Phone Number"
+                      v-model="item.telephone"
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label for="email">Email :</label>
+                    <soft-input
+                      id="email"
+                      type="email"
+                      placeholder="Email"
+                      aria-label="Email"
+                      v-model="item.email"
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label for="password">Password :</label>
+                    <soft-input
+                      id="password"
+                      type="password"
+                      placeholder="Password"
+                      aria-label="Password"
+                      v-model="item.password"
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label for="passwordConfirm">Password Confirm : </label>
+                    <soft-input
+                      id="passwordConfirm"
+                      type="password"
+                      placeholder="password Confirm"
+                      aria-label="passwordConfirm"
+                      v-model="item.passwordConfirm"
+                    />
+                  </div>
+
+                  <button
+                    type="button"
+                    class="btn btn-success mx-1 mt-2"
+                    @click.prevent="update(item.id, item)"
+                  >
+                    Update
+                  </button>
+
+                  <router-link to="/profile">
+                    <button type="button" class="btn btn-secondary mx-1 mt-2">
+                      Cancel
+                    </button>
+                  </router-link>
+                </form>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -118,6 +142,7 @@
 // import SoftSwitch from "@/components/SoftSwitch.vue";
 // import ProfileInfoCard from "./components/ProfileInfoCard.vue";
 // import SoftAvatar from "@/components/SoftAvatar.vue";
+import SoftInput from "@/components/SoftInput.vue";
 import sophie from "@/assets/img/kal-visuals-square.jpg";
 import marie from "@/assets/img/marie.jpg";
 import ivana from "@/assets/img/ivana-square.jpg";
@@ -139,11 +164,13 @@ import {
 // import PlaceHolderCard from "@/examples/Cards/PlaceHolderCard.vue";
 import setNavPills from "@/assets/js/nav-pills.js";
 import setTooltip from "@/assets/js/tooltip.js";
+import swal from "sweetalert";
 import axios from "axios";
 
 export default {
   name: "ProfileOverview",
   components: {
+    SoftInput,
     // SoftSwitch,
     // ProfileInfoCard,
     // SoftAvatar,
@@ -177,21 +204,42 @@ export default {
     idProfile(data) {
       this.dataUser.push(data);
     },
-    reset() {
-      this.dataUser.forEach((item) => {
-        item.name = "";
-      });
-    },
-    async update(id, item){
-      let result = await axios.put(`http://localhost:3000/users/`+id,{
-        name : item.name,
-        address : item.address,
-        telephone : item.telephone,
-        email : item.email,
-        password : item.password
-      })
-      console.log(result);
-      this.$router.push('/');
+
+    async update(id, item) {
+      // validasi ketika password dan password confirm tidak sama
+      if (item.password !== item.passwordConfirm) {
+        await swal({
+          title: "Update Failed!",
+          text: "Your Password Not Match!",
+          icon: "warning",
+          button: "Ok",
+        });
+
+      } else if (item.name && item.email){
+          let result = await axios.put(`http://localhost:3000/users/` + id, {
+            name: item.name,
+            address: item.address,
+            telephone: item.telephone,
+            email: item.email,
+            password: item.password,
+          });
+          console.log(result);
+          await swal({
+            title: "Update Success!",
+            text: "Your Account Has been Updated!",
+            icon: "success",
+            button: "Ok",
+          });
+          this.$router.push("/");
+        }
+        else {
+          await swal({
+            title: "Update Failed!",
+            text: "Please Insert Your Name and Email!",
+            icon: "warning",
+            button: "Ok",
+          });
+        };
     },
   },
 

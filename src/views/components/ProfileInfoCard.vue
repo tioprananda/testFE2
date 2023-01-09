@@ -6,33 +6,45 @@
           <h6 class="mb-0">Profile Information</h6>
         </div>
         <div class="col-md-4 text-end">
-          <a href="#">
-            <i
+          <router-link :to="'/profile/'+info.fullName.id">
+          <i
               class="text-sm fas fa-user-edit text-secondary"
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
+              title="Edit Profile"
             ></i>
-          </a>
+          </router-link> 
         </div>
       </div>
     </div>
     <div class="p-3 card-body">
-      <hr class="horizontal gray-light" />
+      <p class="text-sm">
+        {{ info.description.deskripsi }}
+      </p>
+      <hr class="my-4 horizontal gray-light" />
       <ul class="list-group">
-        <li class="text-sm border-0 list-group-item ps-0">
-          <strong class="text-dark">Name:</strong> &nbsp; {{ info.name }}
+        <li class="pt-0 text-sm border-0 list-group-item ps-0">
+          <strong class="text-dark">Full Name:</strong> &nbsp;
+          {{ info.fullName.name }}
         </li>
         <li class="text-sm border-0 list-group-item ps-0">
-          <strong class="text-dark">Address:</strong> &nbsp; {{ info.address }}
+          <strong class="text-dark">Mobile:</strong> &nbsp; {{ info.mobile.telephone }}
         </li>
         <li class="text-sm border-0 list-group-item ps-0">
-          <strong class="text-dark">Telephone :</strong> &nbsp; {{ info.telephone }}
+          <strong class="text-dark">Email:</strong> &nbsp; {{ info.email.email }}
         </li>
         <li class="text-sm border-0 list-group-item ps-0">
-          <strong class="text-dark">Email:</strong> &nbsp; {{ info.email }}
+          <strong class="text-dark">Location:</strong> &nbsp;
+          {{ info.location.address }}
         </li>
-        <li class="text-sm border-0 list-group-item ps-0">
-          <strong class="text-dark">password:</strong> &nbsp; {{ info.password }}
+        <li class="pb-0 border-0 list-group-item ps-0">
+          <strong class="text-sm text-dark">Social:</strong> &nbsp;
+          <a
+            v-for="({ icon, link }, index) of social"
+            :key="index"
+            class="py-0 mb-0 btn-simple ps-1 pe-2"
+            :href="link"
+          >
+            <font-awesome-icon :icon="icon" />
+          </a>
         </li>
       </ul>
     </div>
@@ -40,13 +52,42 @@
 </template>
 
 <script>
-
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 export default {
   name: "ProfileInfoCard",
   components: {
-  
+    FontAwesomeIcon,
   },
-  props: ['info'],
+  props: {
+    title: {
+      type: String,
+      default: "",
+    },
+   
+    info: {
+      type: Object,
+      fullName: String,
+      mobile: String,
+      email: String,
+      location: String,
+      description : String,
+      default: () => {},
+    },
+    social: {
+      type: Array,
+      link: String,
+      icon: String,
+      default: () => [],
+    },
+    action: {
+      type: Object,
+      route: String,
+      tooltip: String,
+      default: () => ({
+        route: "javascript:;",
+      }),
+    },
+  },
 };
 </script>
