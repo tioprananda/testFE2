@@ -29,9 +29,7 @@
             />
           </div>
         </div>
-        <ul
-          class="navbar-nav justify-content-end"
-        >
+        <ul class="navbar-nav justify-content-end">
           <li class="nav-item d-flex align-items-center">
             <router-link
               :to="{ name: 'Profile' }"
@@ -200,7 +198,10 @@
               </li>
             </ul>
           </li>
-          <li class="nav-item d-flex align-items-center" @click.prevent="logout">
+          <li
+            class="nav-item d-flex align-items-center"
+            @click.prevent="logout"
+          >
             <router-link
               to=""
               class="px-2 nav-link font-weight-bold"
@@ -226,6 +227,7 @@
 import Breadcrumbs from "../Breadcrumbs.vue";
 import { mapMutations, mapActions } from "vuex";
 import axios from "axios";
+import swal from "sweetalert";
 
 export default {
   name: "navbar",
@@ -249,25 +251,38 @@ export default {
       this.navbarMinimize();
     },
 
-       // tampilkan 1 data api yg cocok dgn local storage saat ini
-       getUser(data) {
+    // tampilkan 1 data api yg cocok dgn local storage saat ini
+    getUser(data) {
       const dataFilter = data.find((e) => {
-        if(e.id == this.userLocal.id){
-         return e;
+        if (e.id == this.userLocal.id) {
+          return e;
         }
       });
-    
+
       this.dataUser = dataFilter;
-      console.log(this.dataUser.name)
+      console.log(this.dataUser.name);
     },
 
     // tombol logout
     async logout() {
       await localStorage.clear();
-      this.$router.push("/sign-in");
+      await swal({
+        title: "Are you sure to logout?",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      }).then((exit) => {
+        if(exit){
+          setTimeout(() => {
+            this.$router.push("/sign-in");
+          }, 1000);
+          
+        } 
+      })
+
+
+     
     },
-
-
   },
   components: {
     Breadcrumbs,
@@ -307,8 +322,8 @@ export default {
       }
     });
 
-     // get api data
-     axios.get(`http://localhost:3000/users`).then((response) => {
+    // get api data
+    axios.get(`http://localhost:3000/users`).then((response) => {
       this.getUser(response.data);
     });
   },

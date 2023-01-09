@@ -115,6 +115,18 @@
                     />
                   </div>
 
+                  <div class="mb-3">
+                    <label for="image">Image : </label>
+                    <soft-input
+                      id="image"
+                      type="file"
+                      placeholder="Input Image"
+                      aria-label="Input Image"
+                      @change="uploadImage($event, item)"
+                    />
+                    <img :src="previewImg" :alt="previewImg" v-if="previewImg" width="200">
+                  </div>
+
                   <button
                     type="button"
                     class="btn btn-success mx-1 mt-2"
@@ -197,10 +209,19 @@ export default {
       faInstagram,
       dataUser: [],
       userLocal: [],
+      previewImg: ``,
     };
   },
 
   methods: {
+    uploadImage(event, item){
+      // const dataImg = event.target.files[0].name;
+      // item.image = dataImg;
+      this.previewImg = URL.createObjectURL(event.target.files[0])
+      item.image = URL.createObjectURL(event.target.files[0]);
+      this.dataUser.image.push(item.image)
+    },
+    
     idProfile(data) {
       this.dataUser.push(data);
     },
@@ -222,6 +243,7 @@ export default {
             telephone: item.telephone,
             email: item.email,
             password: item.password,
+            image: item.image,
           });
           console.log(result);
           await swal({
@@ -241,6 +263,9 @@ export default {
           });
         };
     },
+
+  
+
   },
 
   mounted() {

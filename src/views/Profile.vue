@@ -17,7 +17,6 @@
             <div class="avatar avatar-xl position-relative" v-if="this.dataUser.image">
               <img
                 :src="this.dataUser.image"
-                :alt="this.dataUser.image"
                 class="shadow-sm w-100 border-radius-lg"
               />
             </div>
