@@ -43,8 +43,8 @@
               <span v-if="this.$store.state.isRTL" class="d-sm-inline d-none"
                 >يسجل دخول</span
               >
-              <span v-if="this.dataUser.id" class="d-sm-inline d-none"
-                >{{ this.dataUser.name }}
+              <span v-if="dataUser" class="d-sm-inline d-none"
+                >{{ dataUser.data.email }}
               </span>
               <span v-else class="d-sm-inline d-none">Sign In </span>
             </router-link>
@@ -225,9 +225,10 @@
 </template>
 <script>
 import Breadcrumbs from "../Breadcrumbs.vue";
-import { mapMutations, mapActions } from "vuex";
+import { mapMutations, mapActions, mapGetters } from "vuex";
 import axios from "axios";
 import swal from "sweetalert";
+
 
 export default {
   name: "navbar",
@@ -235,53 +236,50 @@ export default {
     return {
       showMenu: false,
       user: ``,
-      dataUser: {},
     };
   },
+
   props: ["minNav", "textWhite"],
-  created() {
+
+  async created() {
     this.minNav;
+    let result = await axios.get(
+      `https://dev.api.universal-iot.com/rest-api/v-1/test/account/profile`,
+      {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("user-info"),
+        },
+      }
+    );
+      // kirim action dataUser
+      this.$store.dispatch('dataUser', result.data)
+      // console.log(this.dataUser)
+    
   },
+
   methods: {
     ...mapMutations(["navbarMinimize", "toggleConfigurator"]),
-    ...mapActions(["toggleSidebarColor"]),
+    ...mapActions(["toggleSidebarColor", "dataUser"]),
 
     toggleSidebar() {
       this.toggleSidebarColor("bg-white");
       this.navbarMinimize();
     },
 
-    // tampilkan 1 data api yg cocok dgn local storage saat ini
-    getUser(data) {
-      const dataFilter = data.find((e) => {
-        if (e.id == this.userLocal.id) {
-          return e;
-        }
-      });
-
-      this.dataUser = dataFilter;
-      console.log(this.dataUser.name);
-    },
-
     // tombol logout
     async logout() {
-      await localStorage.clear();
+   
       await swal({
         title: "Are you sure to logout?",
         icon: "warning",
         buttons: true,
         dangerMode: true,
-      }).then((exit) => {
-        if(exit){
-          setTimeout(() => {
-            this.$router.push("/sign-in");
-          }, 1000);
-          
-        } 
+      }).then(() => {
+        setTimeout(() => {
+          localStorage.clear();
+          this.$router.push("/sign-in");
+        }, 1000);
       })
-
-
-     
     },
   },
   components: {
@@ -291,19 +289,14 @@ export default {
     currentRouteName() {
       return this.$route.name;
     },
+    ...mapGetters(['dataUser'])
   },
 
   mounted() {
-    // get api data
-    axios.get(`http://localhost:3000/users`).then((response) => {
-      this.getUser(response.data);
-    });
-
+   
     //  get data user dari local storage
     let user = localStorage.getItem("user-info");
-    if (user) {
-      this.userLocal = JSON.parse(user);
-    } else {
+    if (!user) {
       this.$router.push("/sign-in");
     }
   },
@@ -322,10 +315,6 @@ export default {
       }
     });
 
-    // get api data
-    axios.get(`http://localhost:3000/users`).then((response) => {
-      this.getUser(response.data);
-    });
   },
 };
 </script>

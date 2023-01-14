@@ -12,11 +12,12 @@
     </div>
     <div class="mx-4 overflow-hidden card card-body blur shadow-blur mt-n6">
       <div class="row gx-4">
+
          <!-- gambar -->
          <div class="col-auto">
-            <div class="avatar avatar-xl position-relative" v-if="this.dataUser.image">
+            <div class="avatar avatar-xl position-relative" v-if="dataUser.data.photo">
               <img
-                :src="this.dataUser.image"
+                :src="dataUser.data.photo"
                 class="shadow-sm w-100 border-radius-lg"
               />
             </div>
@@ -31,8 +32,8 @@
           <!-- end gambar -->
         <div class="col-auto my-auto">
           <div class="h-100">
-            <h5 class="mb-1">{{ this.dataUser.name }}</h5>
-            <p class="mb-0 text-sm font-weight-bold">{{ this.dataUser.address }}</p>
+            <h5 class="mb-1"> {{ dataUser.data.name }} </h5>
+            <p class="mb-0 text-sm font-weight-bold">{{ dataUser.data.email }}</p>
           </div>
         </div>
         <div
@@ -146,7 +147,7 @@
               <li class="nav-item">
                 <router-link
                   class="px-0 py-1 mb-0 nav-link"
-                  :to="'/profile/'+this.dataUser.id"
+                  :to="'/profile/'+dataUser.data.id"
                   role="tab"
                   aria-selected="false"
                 >
@@ -287,6 +288,7 @@
         <profile-info-card
           title="Profile Information"
           :info="{
+            id: dataUser,
             fullName: dataUser,
             mobile: dataUser,
             email: dataUser,
@@ -573,6 +575,7 @@ import PlaceHolderCard from "@/examples/Cards/PlaceHolderCard.vue";
 import setNavPills from "@/assets/js/nav-pills.js";
 import setTooltip from "@/assets/js/tooltip.js";
 import axios from 'axios';
+import {mapActions, mapGetters} from "vuex";
 
 export default {
   name: "ProfileOverview",
@@ -601,12 +604,18 @@ export default {
       faFacebook,
       faTwitter,
       faInstagram,
-      dataUser : {},
       userLocal : [],
     };
   },
 
+  computed : {
+    ...mapGetters([`dataUser`])
+  },
+
   methods: {
+
+    ...mapActions([`dataUser`]),
+
     // tampilkan 1 data api yg cocok dgn local storage saat ini
     editProfile(data) {
       const dataFilter = data.find((e) => {
@@ -615,9 +624,21 @@ export default {
         }
       });
     
-      this.dataUser = dataFilter;
-      console.log(this.dataUser.name)
+      this.$store.dispatch(`dataUser`, dataFilter)
     },
+  },
+
+  async created() {
+    let result = await axios.get(
+      `https://dev.api.universal-iot.com/rest-api/v-1/test/account/profile`,
+      {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("user-info"),
+        },
+      }
+    );
+    this.$store.dispatch(`dataUser`, result.data)
+    console.log(this.dataUser.data);
   },
 
   mounted() {
@@ -625,15 +646,16 @@ export default {
     setNavPills();
     setTooltip(this.$store.state.bootstrap);
 
-    // get data user dari api
-    axios
-      .get(`http://localhost:3000/users`)
-      .then((response) => this.editProfile(response.data));
+    // // get data user dari api
+    // axios
+    //   .get(`http://localhost:3000/users`)
+    //   .then((response) => this.editProfile(response.data));
 
     //  get data user dari local storage
     let user = localStorage.getItem("user-info");
     if (user) {
-      this.userLocal = JSON.parse(user);
+      // this.userLocal = JSON.parse(user);
+      console.log(`ok`)
     } else {
       this.$router.push("/sign-in");
     }

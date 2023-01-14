@@ -1,5 +1,4 @@
 <template>
-
   <div class="container top-0 position-sticky z-index-sticky">
     <div class="row">
       <div class="col-12">
@@ -26,8 +25,11 @@
                 </div>
                 <div class="card-body">
                   <form role="form" class="text-start" @submit.prevent="submit">
-
-                    <beat-loader :loading="loading" :color="color" :size="size"></beat-loader>
+                    <beat-loader
+                      :loading="loading"
+                      :color="color"
+                      :size="size"
+                    ></beat-loader>
 
                     <label>Email</label>
                     <soft-input
@@ -107,7 +109,7 @@ const body = document.getElementsByTagName("body")[0];
 import { mapMutations } from "vuex";
 import axios from "axios";
 import swal from "sweetalert";
-
+import { mapActions } from "vuex";
 // import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
 
 export default {
@@ -142,16 +144,26 @@ export default {
   },
   methods: {
     ...mapMutations(["toggleEveryDisplay", "toggleHideConfig"]),
+
+    ...mapActions([`dataUser`]),
     async submit() {
-      // get api users
-      let result = await axios.get(
-        `http://localhost:3000/users?email=${this.form.email}&password=${this.form.password}`
-      );
-      // cocokkan data dgn hasil inputan, jika true redirect ke halaman /
-      // jika result.status === 200 dan jumlah result > 0 maka
-      // masukan kedalam localstorage dgn key user-info, input spesifikasi data result index ke 0
-      if (result.status === 200 && result.data.length > 0) {
-        localStorage.setItem("user-info", JSON.stringify(result.data[0]));
+      // jika form masih kosong
+      if (!this.form.email || !this.form.password) {
+        await swal({
+          title: "Login Failed!",
+          text: "Please Insert Email and Password!",
+          icon: "warning",
+          button: "Ok",
+        });
+      } else {
+        try {
+        let result = await axios.post(
+          `https://dev.api.universal-iot.com/rest-api/v-1/test/auth/login`,
+          this.form
+        );
+
+        localStorage.setItem("user-info", result.data.data.token);
+        this.dataUser(result.data);
         await swal({
           title: "Login Success!",
           text: "Welcome, You Are Logged In Now!",
@@ -159,15 +171,17 @@ export default {
           button: "Ok",
         });
         this.$router.push("/");
-      } else {
+      } catch (e) {
         await swal({
           title: "Login Failed!",
           text: "Incorrect Email or Password!",
           icon: "warning",
           button: "Ok",
         });
-        this.$router.push("/");
       }
+      }
+
+     
     },
   },
   mounted() {
@@ -178,6 +192,7 @@ export default {
     } else {
       this.$router.push("/sign-in");
     }
+    console.log(user);
   },
 };
 </script>

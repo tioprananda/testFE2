@@ -6,7 +6,7 @@
           <h6 class="mb-0">Profile Information</h6>
         </div>
         <div class="col-md-4 text-end">
-          <router-link :to="'/profile/'+info.fullName.id">
+          <router-link :to="'/profile/'+info.id.data.id">
           <i
               class="text-sm fas fa-user-edit text-secondary"
               title="Edit Profile"
@@ -17,23 +17,23 @@
     </div>
     <div class="p-3 card-body">
       <p class="text-sm">
-        {{ info.description.deskripsi }}
+        
       </p>
       <hr class="my-4 horizontal gray-light" />
       <ul class="list-group">
         <li class="pt-0 text-sm border-0 list-group-item ps-0">
           <strong class="text-dark">Full Name:</strong> &nbsp;
-          {{ info.fullName.name }}
+          {{ info.fullName.data.name }}
         </li>
         <li class="text-sm border-0 list-group-item ps-0">
-          <strong class="text-dark">Mobile:</strong> &nbsp; {{ info.mobile.telephone }}
+          <strong class="text-dark">Phone:</strong> &nbsp; {{ info.mobile.data.phone }}
         </li>
         <li class="text-sm border-0 list-group-item ps-0">
-          <strong class="text-dark">Email:</strong> &nbsp; {{ info.email.email }}
+          <strong class="text-dark">Email:</strong> &nbsp; {{ info.email.data.email }} 
         </li>
         <li class="text-sm border-0 list-group-item ps-0">
-          <strong class="text-dark">Location:</strong> &nbsp;
-          {{ info.location.address }}
+          <strong class="text-dark">Location:</strong> &nbsp; {{ info.location.data.company.company_name }}
+          
         </li>
         <li class="pb-0 border-0 list-group-item ps-0">
           <strong class="text-sm text-dark">Social:</strong> &nbsp;
@@ -67,6 +67,7 @@ export default {
    
     info: {
       type: Object,
+      id: String,
       fullName: String,
       mobile: String,
       email: String,

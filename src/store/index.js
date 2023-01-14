@@ -20,7 +20,10 @@ export default createStore({
       "position-sticky blur shadow-blur left-auto top-1 z-index-sticky px-0 mx-4",
     absolute: "position-absolute px-4 mx-0 w-100 z-index-2",
     bootstrap,
+    dataUser: null,
   },
+
+  // mutation mengubah getter
   mutations: {
     toggleConfigurator(state) {
       state.showConfig = !state.showConfig;
@@ -58,7 +61,12 @@ export default createStore({
     toggleHideConfig(state) {
       state.hideConfigButton = !state.hideConfigButton;
     },
+    dataUser : (state, dataUser) => {
+      state.dataUser = dataUser;
+    },
   },
+
+  // action mengubah mutation
   actions: {
     toggleSidebarColor({ commit }, payload) {
       commit("sidebarType", payload);
@@ -66,6 +74,15 @@ export default createStore({
     setCardBackground({ commit }, payload) {
       commit("cardBackground", payload);
     },
+    dataUser: (context, dataUser) => {
+      context.commit('dataUser', dataUser)
+    },
   },
-  getters: {},
+
+  // getter mengubah state
+  getters: {
+    dataUser : (state) => {
+      return state.dataUser;
+    },
+  },
 });

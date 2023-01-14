@@ -19,7 +19,7 @@
     </div>
   </div>
 
-  <div class="py-4 container-fluid" v-for="item in dataUser" :key="item.id">
+  <div class="py-4 container-fluid">
     <div class="mt-3 row">
       <!-- <div class="col-12 col-md-6 col-xl-6 my-2">
        
@@ -44,14 +44,14 @@
 
       <div class="container">
         <div class="row justify-content-center">
-          <div class="mx-auto col-xl-4 col-lg-5 col-md-7">
+          <div class="mx-auto col-lg-8 col-md-7">
             <div class="card z-index-0">
               <div class="pt-4 text-center card-header">
                 <h5>Edit Account</h5>
               </div>
 
               <div class="card-body">
-                <form role="form" @submit.prevent="submit">
+                <form role="form" @submit.prevent="submit" enctype="multipart/form-data">
                   <div class="mb-3">
                     <label for="name">Name :</label>
                     <soft-input
@@ -59,29 +59,18 @@
                       type="text"
                       placeholder="Name"
                       aria-label="Name"
-                      v-model="item.name"
+                      v-model="this.dataUser.data.name"
                     />
                   </div>
 
                   <div class="mb-3">
-                    <label for="address">Address :</label>
-                    <soft-input
-                      id="address"
-                      type="text"
-                      placeholder="Address"
-                      aria-label="Address"
-                      v-model="item.address"
-                    />
-                  </div>
-
-                  <div class="mb-3">
-                    <label for="mobile">Mobile :</label>
+                    <label for="mobile">Phone :</label>
                     <soft-input
                       id="mobile"
                       type="number"
                       placeholder="Phone Number"
                       aria-label="Phone Number"
-                      v-model="item.telephone"
+                      v-model="this.dataUser.data.phone"
                     />
                   </div>
                   <div class="mb-3">
@@ -91,46 +80,53 @@
                       type="email"
                       placeholder="Email"
                       aria-label="Email"
-                      v-model="item.email"
+                      v-model="this.dataUser.data.email"
                     />
                   </div>
                   <div class="mb-3">
-                    <label for="password">Password :</label>
+                    <label for="password">Old Password :</label>
                     <soft-input
-                      id="password"
+                      id="OldPassword"
                       type="password"
-                      placeholder="Password"
-                      aria-label="Password"
-                      v-model="item.password"
+                      placeholder="Old Password"
+                      aria-label="Old Password"
+                      v-model="oldPassword"
                     />
                   </div>
                   <div class="mb-3">
-                    <label for="passwordConfirm">Password Confirm : </label>
+                    <label for="passwordConfirm">New Password : </label>
                     <soft-input
-                      id="passwordConfirm"
+                      id="NewPassword"
                       type="password"
-                      placeholder="password Confirm"
-                      aria-label="passwordConfirm"
-                      v-model="item.passwordConfirm"
+                      placeholder="New Password"
+                      aria-label="New Password"
+                      v-model="newPassword"
                     />
                   </div>
 
                   <div class="mb-3">
-                    <label for="image">Image : </label>
+                    <label for="image">Photo : </label>
                     <soft-input
                       id="image"
                       type="file"
                       placeholder="Input Image"
                       aria-label="Input Image"
-                      @change="uploadImage($event, item)"
+                      @change="uploadImage($event, this.dataUser)"
                     />
-                    <img :src="previewImg" :alt="previewImg" v-if="previewImg" width="200">
+                    <div v-if="this.dataUser.data.photo">
+                      <img :src="this.dataUser.data.photo" width="250" />
+                    </div>
+                    <div v-else>
+                      <img src="../assets/img/user.png" width="250" />
+                    </div>
                   </div>
 
                   <button
                     type="button"
                     class="btn btn-success mx-1 mt-2"
-                    @click.prevent="update(item.id, item)"
+                    @click.prevent="
+                      update(this.dataUser.data.id, this.dataUser.data)
+                    "
                   >
                     Update
                   </button>
@@ -207,84 +203,174 @@ export default {
       faFacebook,
       faTwitter,
       faInstagram,
-      dataUser: [],
+      dataUser: null,
       userLocal: [],
       previewImg: ``,
+      oldPassword: ``,
+      newPassword: ``,
     };
   },
 
   methods: {
-    uploadImage(event, item){
-      // const dataImg = event.target.files[0].name;
-      // item.image = dataImg;
-      this.previewImg = URL.createObjectURL(event.target.files[0])
-      item.image = URL.createObjectURL(event.target.files[0]);
-      this.dataUser.image = item.image;
+    uploadImage(event, item) {
+      this.previewImg = event.target.files[0];
+      item.photo = URL.createObjectURL(event.target.files[0]);
+      this.dataUser.data.photo = item.photo;
+      console.log(this.dataUser.data.photo);
+      console.log(item.photo);
     },
-    
+
     idProfile(data) {
-      this.dataUser.push(data);
+      this.dataUser = data;
+      console.log(this.dataUser.data);
     },
 
     async update(id, item) {
-      // validasi ketika password dan password confirm tidak sama
-      if (item.password !== item.passwordConfirm) {
+      // jika form kosong
+      if (
+        !this.dataUser.data.name ||
+        !this.dataUser.data.phone ||
+        !this.dataUser.data.email ||
+        !this.oldPassword ||
+        !this.newPassword ||
+        !this.previewImg 
+      ) {
+        // pesan ketika sukses
         await swal({
           title: "Update Failed!",
-          text: "Your Password Not Match!",
+          text: "Please Insert Form!",
           icon: "warning",
           button: "Ok",
         });
+      } else {
+        console.log(id);
+        console.log(item);
+        const token = localStorage.getItem("user-info");
+        console.log(token);
 
-      } else if (item.name && item.email){
-          let result = await axios.put(`http://localhost:3000/users/` + id, {
+        //  ubah nama
+        let resultName = await axios.put(
+          `https://dev.api.universal-iot.com/rest-api/v-1/test/account/profile`,
+          {
             name: item.name,
-            address: item.address,
-            telephone: item.telephone,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log(resultName);
+
+        // ubah no hp
+        let resultPhone = await axios.put(
+          `https://dev.api.universal-iot.com/rest-api/v-1/test/account/profile/phone`,
+          {
+            phone: item.phone,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log(resultPhone);
+
+        // ubah email
+        let resultEmail = await axios.put(
+          `https://dev.api.universal-iot.com/rest-api/v-1/test/account/profile/email`,
+          {
             email: item.email,
-            password: item.password,
-            image: item.image,
-          });
-          console.log(result);
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log(resultEmail);
+
+          // ubah gambar
+          let fd = new FormData();
+          fd.append(`image`, this.previewImg);
+          console.log(fd);
+          console.log(this.previewImg);
+
+          let resultPhoto = await axios
+          .put(`https://dev.api.universal-iot.com/rest-api/v-1/test/account/profile/photo`,{
+            photo : this.previewImg
+          },    
+        {
+            headers : {
+              'Authorization' : `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data'
+            }
+          }
+        )
+        console.log(resultPhoto)
+
+        // reset password
+      
+          let resultPassword = await axios.patch(
+            `https://dev.api.universal-iot.com/rest-api/v-1/test/account/changepassword`,
+            {
+              password_old: this.oldPassword,
+              password_new: this.newPassword,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          console.log(resultPassword);
+       
+
+        // pesan ketika sukses
+        if(resultPassword.status === 201){
           await swal({
-            title: "Update Success!",
-            text: "Your Account Has been Updated!",
-            icon: "success",
-            button: "Ok",
-          });
-          this.$router.push("/");
-        }
-        else {
-          await swal({
-            title: "Update Failed!",
-            text: "Please Insert Your Name and Email!",
-            icon: "warning",
-            button: "Ok",
-          });
-        };
+          title: "Update Failed!",
+          text: "Incorrect Old Password!",
+          icon: "warning",
+          button: "Ok",
+        })
+        .then(() => {
+          this.oldPassword = null,
+          this.newPassword = null
+        })
+        } else {
+        await swal({
+          title: "Update Success!",
+          text: "Your Account Has been Updated!",
+          icon: "success",
+          button: "Ok",
+        });
+        this.$router.push("/");
+      }
+      }
     },
+  },
 
-  
-
+  async created() {
+    let result = await axios
+      .get(
+        `https://dev.api.universal-iot.com/rest-api/v-1/test/account/profile`,
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("user-info"),
+          },
+        }
+      )
+      .then((response) => {
+        this.idProfile(response.data);
+      });
+    console.log(result);
   },
 
   mounted() {
     this.$store.state.isAbsolute = true;
     setNavPills();
     setTooltip(this.$store.state.bootstrap);
-
-    // get data user dar api
-    axios
-      .get(`http://localhost:3000/users/${this.$route.params.id}`)
-      .then((response) => this.idProfile(response.data));
-
-    //  get data user dari local storage
-    let user = localStorage.getItem("user-info");
-    if (user) {
-      this.userLocal = JSON.parse(user);
-    } else {
-      this.$router.push("/sign-in");
-    }
   },
   beforeUnmount() {
     this.$store.state.isAbsolute = false;
